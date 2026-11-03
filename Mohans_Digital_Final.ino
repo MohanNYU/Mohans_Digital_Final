@@ -1,7 +1,10 @@
 //Mohansaluja is a bit of a nerd
 
+int ledpin = 25;
+
 void setup() {
   // put your setup code here, to run once:
+pinMode(ledpin, OUTPUT);
 
 }
 
