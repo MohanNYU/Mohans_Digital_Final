@@ -1,7 +1,6 @@
 //Mohan saluja is a bit of a nerd
 //setting up the uadio library right here
 
-
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -9,20 +8,23 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioSynthWaveform       waveform1;      //xy=64,203
+AudioInputI2S            i2s2;           //xy=69,201
 AudioEffectWaveshaper    waveshape1;     //xy=200,135
 AudioEffectBitcrusher    bitcrusher1;    //xy=203,265
 AudioMixer4              mixer1;         //xy=359,211
 AudioOutputI2S           i2s1;           //xy=492,213
-AudioConnection          patchCord1(waveform1, waveshape1);
-AudioConnection          patchCord2(waveform1, 0, mixer1, 1);
-AudioConnection          patchCord3(waveform1, bitcrusher1);
+AudioConnection          patchCord1(i2s2, 0, mixer1, 1);
+AudioConnection          patchCord2(i2s2, 0, waveshape1, 0);
+AudioConnection          patchCord3(i2s2, 0, bitcrusher1, 0);
 AudioConnection          patchCord4(waveshape1, 0, mixer1, 0);
 AudioConnection          patchCord5(bitcrusher1, 0, mixer1, 2);
 AudioConnection          patchCord6(mixer1, 0, i2s1, 0);
 AudioConnection          patchCord7(mixer1, 0, i2s1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=433,371
 // GUItool: end automatically generated code
+
+
+
 
 
 int bypass[2] = {34, 33};
@@ -74,15 +76,17 @@ void setup(){
 AudioMemory(12); //always include this when using the Teensy Audio Library even if you don't know what it is yet!
 
 sgtl5000_1.enable();
-sgtl5000_1.volume(0.5);
-waveform1.begin(WAVEFORM_SINE); //25 - 28 this is my test tone
-waveform1.frequency(2000);
+sgtl5000_1.volume(1);
+sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
+
+// waveform1.begin(WAVEFORM_SINE); //25 - 28 this is my test tone
+// waveform1.frequency(2000);
 
 }
 
 void loop(){
 
-waveform1.amplitude(0.8); //amplitude (volume) can be 0 to 1 and this is usually a good volume for headphones
+// waveform1.amplitude(0.0); //amplitude (volume) can be 0 to 1 and this is usually a good volume for headphones
 
 checkButton(0);
 checkButton(1);
