@@ -76,7 +76,7 @@ void setup(){
 AudioMemory(12); //always include this when using the Teensy Audio Library even if you don't know what it is yet!
 
 sgtl5000_1.enable();
-sgtl5000_1.volume(1);
+sgtl5000_1.volume(0.5);
 sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
 
 // waveform1.begin(WAVEFORM_SINE); //25 - 28 this is my test tone
@@ -90,6 +90,7 @@ void loop(){
 
 checkButton(0);
 checkButton(1);
+
 if(buttonOn[0] == true)
 {mixer1.gain(0, 1);
 mixer1.gain(1, 0);
@@ -101,12 +102,17 @@ mixer1.gain(0, 0);
 mixer1.gain(1, 0);
 mixer1.gain(2, 1);
 }
-
 else{
 mixer1.gain(1, 1);
 mixer1.gain(0, 0);
 mixer1.gain(2, 0);
 }
+
+// mixer1.gain(0, 0);
+// mixer1.gain(1, 0);
+// mixer1.gain(2, 1);
+
+
 
 
 bitcrusher1.bits(
