@@ -8,25 +8,18 @@
 
 // GUItool: begin automatically generated code
 AudioSynthWaveform       waveform1;      //xy=88,128
-AudioEffectWaveshaper    waveshape2;     //xy=190,265
 AudioEffectWaveshaper    waveshape1;     //xy=323,134
 AudioMixer4              mixer1;         //xy=698,290
 AudioOutputI2S           i2s1;           //xy=844,291
 AudioConnection          patchCord1(waveform1, waveshape1);
-AudioConnection          patchCord2(waveform1, waveshape2);
-AudioConnection          patchCord3(waveshape2, 0, mixer1, 1);
-AudioConnection          patchCord4(waveshape1, 0, mixer1, 0);
-AudioConnection          patchCord5(mixer1, 0, i2s1, 0);
-AudioConnection          patchCord6(mixer1, 0, i2s1, 1);
+AudioConnection          patchCord2(waveform1, 0, mixer1, 1);
+AudioConnection          patchCord3(waveshape1, 0, mixer1, 0);
+AudioConnection          patchCord4(mixer1, 0, i2s1, 0);
+AudioConnection          patchCord5(mixer1, 0, i2s1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 // GUItool: end automatically generated code
 
 
-
-int bypass[2] = {34, 33};
-bool buttonState[2] = {LOW, LOW};
-bool lastButtonState[2] = {LOW, LOW};
-bool buttonOn[2] = {false, false};
 
 float dist[257];
 float drive[257];
@@ -59,10 +52,9 @@ if(digitalRead(36) == HIGH)
 
 } else {
   // waveform1.amplitude(0.0f);
-  mixer1.gain(1, 0.0f);
-  mixer1.gain(2, 1.0f);
+  mixer1.gain(0, 0.0);
+  mixer1.gain(1, 0.5);
 
-  waveshape2.shape(drive, 257);
   
   }
 
@@ -75,8 +67,8 @@ void mode1(){
 
   updateWaveTable1(b);
 
-  mixer1.gain(1, 1.0f);
-  mixer1.gain(2, 0.0f);
+  mixer1.gain(0, 1.0);
+  mixer1.gain(1, 0.0);
 
 
 }
