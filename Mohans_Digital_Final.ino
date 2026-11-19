@@ -26,10 +26,10 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 
 
 
-float dist[257];
-float drive[257];
+float dist[257]; //the distortion setting
+float drive[257]; //the overdrive/light shaping setting
 
-
+// #define PI 3.1415926535897932384626433832795;
 
 void setup(){
 AudioMemory(12); //always include this when using the Teensy Audio Library even if you don't know what it is yet!
@@ -50,7 +50,7 @@ void loop(){
 // int c = map(analogRead(A13), 0, 1023, 0, 255); // LEDS
 // analogWrite(A14, c); // LEDS
 
-if(digitalRead(36) == HIGH)
+if(digitalRead(36) == HIGH) //mode selector
 {
 
  mode1();
@@ -72,7 +72,7 @@ void mode1(){
   updateWaveTable1(b);
 
   mixer1.gain(0, 1.0);
-  mixer1.gain(1, 0.0);
+  mixer1.gain(1, 0.0); //adjusting mixer gain
   mixer1.gain(2, 0.0);
 
 
@@ -85,11 +85,11 @@ void updateWaveTable1(float a)
 for(int i = 0; i<257; i++)
 {
   float z = (i/(128.5)) - 1;
-  float x = tanh(a * z);
+  float x = tanh(a * z); //hard tanh distortion
   dist[i] = x;
 }
 
-waveshape1.shape(dist, 257);
+waveshape1.shape(dist, 257); //wave shaping application
 
 }
 
@@ -97,7 +97,7 @@ void mode2(){
 
 float b = map((float) analogRead(A13), 0, 1023, 0, 3); //verb constant
 
-  mixer1.gain(0, 0.0);
+  mixer1.gain(0, 0.0); //readjusting mixer gain
   mixer1.gain(1, 1.0);
   mixer1.gain(2, 1.0);
 
@@ -105,12 +105,12 @@ float b = map((float) analogRead(A13), 0, 1023, 0, 3); //verb constant
 for(int i = 0; i<257; i++)
 {
   float z = (i/(128.5)) - 2;
-  float x = tanh(2.0f * z);
+  float x = (2/PI) * atan(2.0f * z); //soft distortion using arctan modeling
   drive[i] = x;
 }
 
-waveshape2.shape(drive, 257);
+waveshape2.shape(drive, 257); //shaping
 
-freeverb1.roomsize(b);
+freeverb1.roomsize(b); //reverb controlled by b knob
 freeverb1.damping(b);
 }
