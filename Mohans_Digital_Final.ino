@@ -9,13 +9,15 @@
 // GUItool: begin automatically generated code
 AudioSynthWaveform       waveform1;      //xy=88,128
 AudioEffectWaveshaper    waveshape1;     //xy=323,134
+AudioEffectWaveshaper    waveshape2;     //xy=323,134
 AudioMixer4              mixer1;         //xy=698,290
 AudioOutputI2S           i2s1;           //xy=844,291
 AudioConnection          patchCord1(waveform1, waveshape1);
-AudioConnection          patchCord2(waveform1, 0, mixer1, 1);
+AudioConnection          patchCord2(waveform1, waveshape2);
 AudioConnection          patchCord3(waveshape1, 0, mixer1, 0);
-AudioConnection          patchCord4(mixer1, 0, i2s1, 0);
-AudioConnection          patchCord5(mixer1, 0, i2s1, 1);
+AudioConnection          patchCord4(waveshape2, 0, mixer1, 1);
+AudioConnection          patchCord5(mixer1, 0, i2s1, 0);
+AudioConnection          patchCord6(mixer1, 0, i2s1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 // GUItool: end automatically generated code
 
@@ -52,9 +54,8 @@ if(digitalRead(36) == HIGH)
 
 } else {
   // waveform1.amplitude(0.0f);
-  mixer1.gain(0, 0.0);
-  mixer1.gain(1, 0.5);
 
+mode2();
   
   }
 
@@ -88,4 +89,17 @@ waveshape1.shape(dist, 257);
 
 }
 
+void mode2(){
+  mixer1.gain(0, 0.0);
+  mixer1.gain(1, 1.0);
 
+for(int i = 0; i<257; i++)
+{
+  float z = (i/(128.5)) - 2;
+  float x = tanh(2.0f * z);
+  drive[i] = x;
+}
+
+waveshape2.shape(drive, 257);
+
+}
