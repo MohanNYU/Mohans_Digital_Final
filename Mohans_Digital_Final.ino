@@ -7,17 +7,20 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioSynthWaveform       waveform1;      //xy=88,128
+AudioSynthWaveform       waveform1;      //xy=106,170
+AudioEffectWaveshaper    waveshape2;     //xy=318,229
 AudioEffectWaveshaper    waveshape1;     //xy=323,134
-AudioEffectWaveshaper    waveshape2;     //xy=323,134
+AudioEffectFreeverb      freeverb1;      //xy=323,310
 AudioMixer4              mixer1;         //xy=698,290
 AudioOutputI2S           i2s1;           //xy=844,291
 AudioConnection          patchCord1(waveform1, waveshape1);
 AudioConnection          patchCord2(waveform1, waveshape2);
-AudioConnection          patchCord3(waveshape1, 0, mixer1, 0);
+AudioConnection          patchCord3(waveform1, freeverb1);
 AudioConnection          patchCord4(waveshape2, 0, mixer1, 1);
-AudioConnection          patchCord5(mixer1, 0, i2s1, 0);
-AudioConnection          patchCord6(mixer1, 0, i2s1, 1);
+AudioConnection          patchCord5(waveshape1, 0, mixer1, 0);
+AudioConnection          patchCord6(freeverb1, 0, mixer1, 2);
+AudioConnection          patchCord7(mixer1, 0, i2s1, 0);
+AudioConnection          patchCord8(mixer1, 0, i2s1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 // GUItool: end automatically generated code
 
@@ -70,6 +73,7 @@ void mode1(){
 
   mixer1.gain(0, 1.0);
   mixer1.gain(1, 0.0);
+  mixer1.gain(2, 0.0);
 
 
 }
@@ -90,8 +94,13 @@ waveshape1.shape(dist, 257);
 }
 
 void mode2(){
+
+float b = map((float) analogRead(A13), 0, 1023, 0, 3); //verb constant
+
   mixer1.gain(0, 0.0);
   mixer1.gain(1, 1.0);
+  mixer1.gain(2, 1.0);
+
 
 for(int i = 0; i<257; i++)
 {
@@ -102,4 +111,6 @@ for(int i = 0; i<257; i++)
 
 waveshape2.shape(drive, 257);
 
+freeverb1.roomsize(b);
+freeverb1.damping(b);
 }
