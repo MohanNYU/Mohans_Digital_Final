@@ -8,22 +8,24 @@
 
 // GUItool: begin automatically generated code
 AudioInputI2S            i2s2;           //xy=117,209
+AudioEffectWaveshaper    waveshape1;     //xy=276,146
 AudioEffectFreeverb      freeverb1;      //xy=316,311
 AudioEffectWaveshaper    waveshape2;     //xy=318,229
-AudioEffectWaveshaper    waveshape1;     //xy=323,134
+AudioEffectWaveshaper    waveshape3;     //xy=458,131
 AudioMixer4              mixer1;         //xy=698,290
 AudioOutputI2S           i2s1;           //xy=833,178
 AudioOutputUSB           usb1;           //xy=903,348
 AudioConnection          patchCord1(i2s2, 0, waveshape1, 0);
 AudioConnection          patchCord2(i2s2, 0, waveshape2, 0);
 AudioConnection          patchCord3(i2s2, 0, freeverb1, 0);
-AudioConnection          patchCord4(freeverb1, 0, mixer1, 2);
-AudioConnection          patchCord5(waveshape2, 0, mixer1, 1);
-AudioConnection          patchCord6(waveshape1, 0, mixer1, 0);
-AudioConnection          patchCord7(mixer1, 0, i2s1, 0);
-AudioConnection          patchCord8(mixer1, 0, i2s1, 1);
-AudioConnection          patchCord9(mixer1, 0, usb1, 0);
-AudioConnection          patchCord10(mixer1, 0, usb1, 1);
+AudioConnection          patchCord4(waveshape1, waveshape3);
+AudioConnection          patchCord5(freeverb1, 0, mixer1, 2);
+AudioConnection          patchCord6(waveshape2, 0, mixer1, 1);
+AudioConnection          patchCord7(waveshape3, 0, mixer1, 0);
+AudioConnection          patchCord8(mixer1, 0, i2s1, 0);
+AudioConnection          patchCord9(mixer1, 0, i2s1, 1);
+AudioConnection          patchCord10(mixer1, 0, usb1, 0);
+AudioConnection          patchCord11(mixer1, 0, usb1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 // GUItool: end automatically generated code
 
@@ -49,6 +51,7 @@ AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 
 
 float dist[257]; //the distortion setting
+float dist2[257]; //the distortion setting phase 2
 float drive[257]; //the overdrive/light shaping setting
 
 // #define PI 3.1415926535897932384626433832795;
@@ -109,11 +112,15 @@ void updateWaveTable1(float a)
 for(int i = 0; i<257; i++)
 {
   float z = (i/(128.5)) - 1;
-  float x = (2/PI) * atan(a * z); //hard tanh distortion
-  dist[i] = x;
+  float x = (2/PI) * atan(a * z); //soft atan distortion
+  float y = tanh(a * z); //hard tanh distortion
+  dist[i] = x; 
+  dist2[i] = y;
 }
 
 waveshape1.shape(dist, 257); //wave shaping application
+waveshape3.shape(dist2, 257); //wave shaping application
+
 
 }
 
