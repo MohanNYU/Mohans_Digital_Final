@@ -90,7 +90,7 @@ mode2();
 
 
 void mode1(){
-  float b = map(analogRead(A13), 0, 1023, 0, 20); //tanh constant
+  float b = map(analogRead(A13), 0, 1023, 0, 50); //tanh constant
 
   updateWaveTable1(b);
 
@@ -128,12 +128,17 @@ float b = map((float) analogRead(A13), 0, 1023, 0, 3); //verb constant
 for(int i = 0; i<257; i++)
 {
   float z = (i/(128.5)) - 2;
-  float x = (2/PI) * atan(2.0f * z); //soft distortion using arctan modeling
+  float x = (2/PI) * atan(3.0f * z); //soft distortion using arctan modeling
   drive[i] = x;
 }
 
 waveshape2.shape(drive, 257); //shaping
 
+if(b <= 1){
+  freeverb1.roomsize(0); //NO REVERB BELOW CERTAin THRESHOLD
+freeverb1.damping(0);
+} else{
 freeverb1.roomsize(b); //reverb controlled by b knob
 freeverb1.damping(b);
+}
 }
