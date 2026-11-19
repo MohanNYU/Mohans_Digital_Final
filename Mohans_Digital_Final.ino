@@ -1,5 +1,5 @@
 //Mohan saluja is a bit of a nerd
-//setting up the uadio library right here
+
 #include <Audio.h>
 #include <Wire.h>
 #include <SPI.h>
@@ -7,20 +7,20 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioSynthWaveform       waveform1;      //xy=64,203
-AudioEffectWaveshaper    waveshape1;     //xy=200,135
-AudioEffectBitcrusher    bitcrusher1;    //xy=203,265
-AudioMixer4              mixer1;         //xy=359,211
-AudioOutputI2S           i2s1;           //xy=492,213
+AudioSynthWaveform       waveform1;      //xy=88,128
+AudioEffectWaveshaper    waveshape2;     //xy=190,265
+AudioEffectWaveshaper    waveshape1;     //xy=323,134
+AudioMixer4              mixer1;         //xy=698,290
+AudioOutputI2S           i2s1;           //xy=844,291
 AudioConnection          patchCord1(waveform1, waveshape1);
-AudioConnection          patchCord2(waveform1, 0, mixer1, 1);
-AudioConnection          patchCord3(waveform1, bitcrusher1);
+AudioConnection          patchCord2(waveform1, waveshape2);
+AudioConnection          patchCord3(waveshape2, 0, mixer1, 1);
 AudioConnection          patchCord4(waveshape1, 0, mixer1, 0);
-AudioConnection          patchCord5(bitcrusher1, 0, mixer1, 2);
-AudioConnection          patchCord6(mixer1, 0, i2s1, 0);
-AudioConnection          patchCord7(mixer1, 0, i2s1, 1);
-AudioControlSGTL5000     sgtl5000_1;     //xy=433,371
+AudioConnection          patchCord5(mixer1, 0, i2s1, 0);
+AudioConnection          patchCord6(mixer1, 0, i2s1, 1);
+AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 // GUItool: end automatically generated code
+
 
 
 int bypass[2] = {34, 33};
@@ -28,10 +28,9 @@ bool buttonState[2] = {LOW, LOW};
 bool lastButtonState[2] = {LOW, LOW};
 bool buttonOn[2] = {false, false};
 
-float WAVESHAPE_EXAMPLE[17] = {};
+float dist[257];
+float drive[257];
 
-int knobOld = -1;
-int knobNew = analogRead(A13);
 
 
 void setup(){
@@ -41,36 +40,60 @@ sgtl5000_1.enable();
 sgtl5000_1.volume(0.5);
 waveform1.begin(WAVEFORM_SINE); //25 - 28 this is my test tone
 waveform1.frequency(1000);
+waveform1.amplitude(0.2); //amplitude (volume) can be 0 to 1 and this is usually a good volume for headphones
 
-pinMode(A11, OUTPUT);
+pinMode(A14, OUTPUT);
+pinMode(36, INPUT);
 
 }
 
 void loop(){
-//I'm removing the mixer stuff right now to focus on the waveshaper
 
-waveform1.amplitude(0.8); //amplitude (volume) can be 0 to 1 and this is usually a good volume for headphones
-// updateWaveTable(b);
+// int c = map(analogRead(A13), 0, 1023, 0, 255); // LEDS
+// analogWrite(A14, c); // LEDS
 
-int b = map(analogRead(A13), 0, 1023, 0, 20);
-int c = map(analogRead(A13), 0, 1023, 0, 255);
-updateWaveTable(b);
+if(digitalRead(36) == HIGH)
+{
 
-digitalWrite(A11, c);
+ mode1();
+
+} else {
+  // waveform1.amplitude(0.0f);
+  mixer1.gain(1, 0.0f);
+  mixer1.gain(2, 1.0f);
+
+  waveshape2.shape(drive, 257);
+  
+  }
+
 
 }
 
-void updateWaveTable(float a)
+
+void mode1(){
+  float b = map(analogRead(A13), 0, 1023, 0, 20); //tanh constant
+
+  updateWaveTable1(b);
+
+  mixer1.gain(1, 1.0f);
+  mixer1.gain(2, 0.0f);
+
+
+}
+
+
+void updateWaveTable1(float a)
 {
 
-for(int i = 0; i<17; i++)
+for(int i = 0; i<257; i++)
 {
-  float z = (i/(8.5)) - 1;
+  float z = (i/(128.5)) - 1;
   float x = tanh(a * z);
-  WAVESHAPE_EXAMPLE[i] = x;
+  dist[i] = x;
 }
 
-waveshape1.shape(WAVESHAPE_EXAMPLE, 17);
+waveshape1.shape(dist, 257);
 
 }
+
 
