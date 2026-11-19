@@ -6,22 +6,42 @@
 #include <SD.h>
 #include <SerialFlash.h>
 
+
 // GUItool: begin automatically generated code
-AudioSynthWaveform       waveform1;      //xy=106,170
+AudioInputI2S            i2s2;           //xy=117,209
+AudioEffectFreeverb      freeverb1;      //xy=316,311
 AudioEffectWaveshaper    waveshape2;     //xy=318,229
 AudioEffectWaveshaper    waveshape1;     //xy=323,134
-AudioEffectFreeverb      freeverb1;      //xy=323,310
 AudioMixer4              mixer1;         //xy=698,290
 AudioOutputI2S           i2s1;           //xy=844,291
-AudioConnection          patchCord1(waveform1, waveshape1);
-AudioConnection          patchCord2(waveform1, waveshape2);
-AudioConnection          patchCord3(waveform1, freeverb1);
-AudioConnection          patchCord4(waveshape2, 0, mixer1, 1);
-AudioConnection          patchCord5(waveshape1, 0, mixer1, 0);
-AudioConnection          patchCord6(freeverb1, 0, mixer1, 2);
+AudioConnection          patchCord1(i2s2, 0, waveshape1, 0);
+AudioConnection          patchCord2(i2s2, 0, waveshape2, 0);
+AudioConnection          patchCord3(i2s2, 0, freeverb1, 0);
+AudioConnection          patchCord4(freeverb1, 0, mixer1, 2);
+AudioConnection          patchCord5(waveshape2, 0, mixer1, 1);
+AudioConnection          patchCord6(waveshape1, 0, mixer1, 0);
 AudioConnection          patchCord7(mixer1, 0, i2s1, 0);
 AudioConnection          patchCord8(mixer1, 0, i2s1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
+// GUItool: end automatically generated code
+
+
+//FROM HERE IS THE WAVE FORM GENERATOR TEST CODE
+// AudioSynthWaveform       waveform1;      //xy=106,170
+// AudioEffectWaveshaper    waveshape2;     //xy=318,229
+// AudioEffectWaveshaper    waveshape1;     //xy=323,134
+// AudioEffectFreeverb      freeverb1;      //xy=323,310
+// AudioMixer4              mixer1;         //xy=698,290
+// AudioOutputI2S           i2s1;           //xy=844,291
+// AudioConnection          patchCord1(waveform1, waveshape1);
+// AudioConnection          patchCord2(waveform1, waveshape2);
+// AudioConnection          patchCord3(waveform1, freeverb1);
+// AudioConnection          patchCord4(waveshape2, 0, mixer1, 1);
+// AudioConnection          patchCord5(waveshape1, 0, mixer1, 0);
+// AudioConnection          patchCord6(freeverb1, 0, mixer1, 2);
+// AudioConnection          patchCord7(mixer1, 0, i2s1, 0);
+// AudioConnection          patchCord8(mixer1, 0, i2s1, 1);
+// AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 // GUItool: end automatically generated code
 
 
@@ -36,12 +56,15 @@ AudioMemory(12); //always include this when using the Teensy Audio Library even 
 
 sgtl5000_1.enable();
 sgtl5000_1.volume(0.5);
-waveform1.begin(WAVEFORM_SINE); //25 - 28 this is my test tone
-waveform1.frequency(1000);
-waveform1.amplitude(0.2); //amplitude (volume) can be 0 to 1 and this is usually a good volume for headphones
+// waveform1.begin(WAVEFORM_SINE); //25 - 28 this is my test tone
+// waveform1.frequency(1000);
+// waveform1.amplitude(0.2); //amplitude (volume) can be 0 to 1 and this is usually a good volume for headphones
 
 pinMode(A14, OUTPUT);
 pinMode(36, INPUT);
+
+//sgtl5000_1.volume(1);
+sgtl5000_1.inputSelect(AUDIO_INPUT_LINEIN);
 
 }
 
