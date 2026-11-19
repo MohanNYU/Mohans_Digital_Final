@@ -7,27 +7,30 @@
 #include <SerialFlash.h>
 
 // GUItool: begin automatically generated code
-AudioInputI2S            i2s2;           //xy=117,209
-AudioEffectWaveshaper    waveshape1;     //xy=276,146
+AudioInputI2S            i2s2;           //xy=55,236
+AudioFilterStateVariable filter1;        //xy=106,53
+AudioEffectWaveshaper    waveshape1;     //xy=286,73
 AudioEffectFreeverb      freeverb1;      //xy=316,311
 AudioEffectWaveshaper    waveshape2;     //xy=318,229
 AudioEffectWaveshaper    waveshape3;     //xy=458,131
 AudioMixer4              mixer1;         //xy=698,290
 AudioOutputI2S           i2s1;           //xy=833,178
 AudioOutputUSB           usb1;           //xy=903,348
-AudioConnection          patchCord1(i2s2, 0, waveshape1, 0);
-AudioConnection          patchCord2(i2s2, 0, waveshape2, 0);
-AudioConnection          patchCord3(i2s2, 0, freeverb1, 0);
-AudioConnection          patchCord4(waveshape1, waveshape3);
-AudioConnection          patchCord5(freeverb1, 0, mixer1, 2);
-AudioConnection          patchCord6(waveshape2, 0, mixer1, 1);
-AudioConnection          patchCord7(waveshape3, 0, mixer1, 0);
-AudioConnection          patchCord8(mixer1, 0, i2s1, 0);
-AudioConnection          patchCord9(mixer1, 0, i2s1, 1);
-AudioConnection          patchCord10(mixer1, 0, usb1, 0);
-AudioConnection          patchCord11(mixer1, 0, usb1, 1);
+AudioConnection          patchCord1(i2s2, 0, waveshape2, 0);
+AudioConnection          patchCord2(i2s2, 0, freeverb1, 0);
+AudioConnection          patchCord3(i2s2, 0, filter1, 0);
+AudioConnection          patchCord4(filter1, 2, waveshape1, 0);
+AudioConnection          patchCord5(waveshape1, waveshape3);
+AudioConnection          patchCord6(freeverb1, 0, mixer1, 2);
+AudioConnection          patchCord7(waveshape2, 0, mixer1, 1);
+AudioConnection          patchCord8(waveshape3, 0, mixer1, 0);
+AudioConnection          patchCord9(mixer1, 0, i2s1, 0);
+AudioConnection          patchCord10(mixer1, 0, i2s1, 1);
+AudioConnection          patchCord11(mixer1, 0, usb1, 0);
+AudioConnection          patchCord12(mixer1, 0, usb1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 // GUItool: end automatically generated code
+
 
 
 //FROM HERE IS THE WAVE FORM GENERATOR TEST CODE
@@ -109,6 +112,8 @@ void mode1(){
 void updateWaveTable1(float a)
 {
 
+filter1.frequency(300);
+
 for(int i = 0; i<257; i++)
 {
   float z = (i/(128.5)) - 1;
@@ -130,7 +135,7 @@ float b = map((float) analogRead(A13), 0, 1023, 0, 3); //verb constant
 
   mixer1.gain(0, 0.0); //readjusting mixer gain
   mixer1.gain(1, 1.0);
-  mixer1.gain(2, 1.0);
+  // mixer1.gain(2, 1.0);
 
 
 for(int i = 0; i<257; i++)
@@ -142,10 +147,10 @@ for(int i = 0; i<257; i++)
 
 waveshape2.shape(drive, 257); //shaping
 
-if(b <= 1){
-  freeverb1.roomsize(0); //NO REVERB BELOW CERTAin THRESHOLD
-freeverb1.damping(0);
+if(b <= .5){
+  mixer1.gain(2, 0.0);
 } else{
+  mixer1.gain(2, 1.0);
 freeverb1.roomsize(b); //reverb controlled by b knob
 freeverb1.damping(b);
 }
