@@ -14,6 +14,7 @@ AudioEffectFreeverb      freeverb1;      //xy=316,311
 AudioEffectWaveshaper    waveshape2;     //xy=318,229
 AudioEffectWaveshaper    waveshape3;     //xy=458,131
 AudioMixer4              mixer1;         //xy=698,290
+AudioFilterStateVariable filter2;        //xy=777,382
 AudioOutputI2S           i2s1;           //xy=833,178
 AudioOutputUSB           usb1;           //xy=903,348
 AudioConnection          patchCord1(i2s2, 0, waveshape2, 0);
@@ -26,10 +27,13 @@ AudioConnection          patchCord7(waveshape2, 0, mixer1, 1);
 AudioConnection          patchCord8(waveshape3, 0, mixer1, 0);
 AudioConnection          patchCord9(mixer1, 0, i2s1, 0);
 AudioConnection          patchCord10(mixer1, 0, i2s1, 1);
-AudioConnection          patchCord11(mixer1, 0, usb1, 0);
-AudioConnection          patchCord12(mixer1, 0, usb1, 1);
+AudioConnection          patchCord11(mixer1, 0, filter2, 1);
+AudioConnection          patchCord12(mixer1, 0, filter2, 0);
+AudioConnection          patchCord13(filter2, 2, usb1, 0);
+AudioConnection          patchCord14(filter2, 2, usb1, 1);
 AudioControlSGTL5000     sgtl5000_1;     //xy=684,110
 // GUItool: end automatically generated code
+
 
 
 
@@ -92,6 +96,7 @@ mode2();
   
   }
 
+filter2.frequency(20.0f); //weird sub frequency attenuation
 
 }
 
@@ -101,7 +106,7 @@ void mode1(){
 
   updateWaveTable1(b);
 
-  mixer1.gain(0, 1.0);
+  mixer1.gain(0, 0.5); //lower the damn volume
   mixer1.gain(1, 0.0); //adjusting mixer gain
   mixer1.gain(2, 0.0);
 
